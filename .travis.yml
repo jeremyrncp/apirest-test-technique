@@ -1,0 +1,19 @@
+language: php
+
+php:
+- '7.2'
+
+services:
+- mysql
+
+before_install:
+- chmod +x bin/console
+- mysql -e 'CREATE DATABASE IF NOT EXISTS test;'
+
+install:
+- composer install
+
+script:
+- bin/console doctrine:schema:drop
+- bin/console doctrine:schema:create
+- vendor/bin/simple-phpunit
