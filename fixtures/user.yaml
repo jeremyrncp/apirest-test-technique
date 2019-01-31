@@ -1,0 +1,5 @@
+App\Entity\User:
+  user_first:
+    username: martin
+    birthDate: '<date_create()>'
+    email: martin.dupont@api.com
