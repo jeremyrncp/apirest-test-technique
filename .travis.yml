@@ -16,4 +16,4 @@ install:
 script:
 - bin/console doctrine:schema:drop
 - bin/console doctrine:schema:create
-- vendor/bin/simple-phpunit
+-  SYMFONY_DEPRECATIONS_HELPER='/Doctrine\\Common\\ClassLoader is deprecated\./' ./vendor/bin/simple-phpunit
