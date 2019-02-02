@@ -4,6 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    omdbapikey: '79124c25'
 
 services:
     # default configuration for services in *this* file
@@ -22,6 +23,8 @@ services:
     App\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
+        calls:
+            - [setContainer, ["@service_container"]]
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
@@ -32,3 +35,22 @@ services:
     App\EventListener\UserCreate:
         tags:
         - { name: doctrine.event_listener, event: prePersist }
+
+    guzzle:
+        class: 'GuzzleHttp\Client'
+    GuzzleHttp\Client:
+        alias: guzzle
+
+    httpclient:
+        arguments: ['@guzzle']
+        class: 'App\Utils\Http\HttpClient'
+
+    movie.service:
+        arguments: ['@httpclient', '@form.factory', '@doctrine.orm.default_entity_manager']
+        class: 'App\Service\Movie\MovieService'
+        calls:
+            - [setOmdbApiKey, ["%omdbapikey%"]]
+        public: true
+
+    App\Repository\UserRepository:
+    App\Repository\MovieRepository:
