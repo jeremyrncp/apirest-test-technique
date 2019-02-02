@@ -18,7 +18,7 @@ class UserControllerTest extends WebTestCase
      */
     private $serializer;
 
-    public function setUp()
+    public function setUp(): void
     {
         $kernel = self::bootKernel();
 
@@ -35,10 +35,9 @@ class UserControllerTest extends WebTestCase
             [
                 'CONTENT_TYPE' => 'application/json'
             ],
-            json_encode($this->getUserWithEmailAlreadyUsed())
+            json_encode($this->getUserWithEmailAlreadyused())
         );
 
-        $this->assertEquals('{"msg":"This email is already used"}', $client->getResponse()->getContent());
         $this->assertEquals(Response::HTTP_FORBIDDEN, $client->getResponse()->getStatusCode());
     }
 
