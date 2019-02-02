@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Asserts;
 
@@ -43,6 +45,21 @@ class User
      * @ORM\Column(type="datetime")
      */
     private $createdAt;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Movie", inversedBy="users")
+     * @ORM\JoinTable(
+     *     name="movie_choices",
+     *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="movie_id", referencedColumnName="imdb_id")}
+     * )
+     */
+    private $Movies;
+
+    public function __construct()
+    {
+        $this->Movies = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -93,6 +110,32 @@ class User
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Movie[]
+     */
+    public function getMovies(): Collection
+    {
+        return $this->Movies;
+    }
+
+    public function addMovie(Movie $movie): self
+    {
+        if (!$this->Movies->contains($movie)) {
+            $this->Movies[] = $movie;
+        }
+
+        return $this;
+    }
+
+    public function removeMovie(Movie $movie): self
+    {
+        if ($this->Movies->contains($movie)) {
+            $this->Movies->removeElement($movie);
+        }
 
         return $this;
     }

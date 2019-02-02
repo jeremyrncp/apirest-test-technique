@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -46,7 +47,7 @@ class UserController extends ApiController
                 $entityManager->flush();
 
                 return new Response(
-                    $serializer->serialize($user, 'json'),
+                    $serializer->serialize($user, self::FORMAT),
                     Response::HTTP_CREATED
                 );
             } catch (UniqueConstraintViolationException $e) {
@@ -57,5 +58,17 @@ class UserController extends ApiController
         if ($userForm->getErrors(true)->count() > 0) {
             return $this->getResponseWithFormErrors($userForm->getErrors(true));
         }
+    }
+
+
+    protected function fetchUser(int $idUser, EntityManagerInterface $em): User
+    {
+        $user = $em->getRepository(User::class)->find($idUser);
+
+        if (null === $user) {
+            throw new NotFoundHttpException('User not found');
+        }
+
+        return $user;
     }
 }

@@ -20,6 +20,9 @@
         <testsuite name="Functionnal tests">
             <directory>tests/Functionnal</directory>
         </testsuite>
+        <testsuite name="Unitary tests">
+            <directory>tests/Unit</directory>
+        </testsuite>
     </testsuites>
 
     <filter>

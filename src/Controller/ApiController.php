@@ -12,10 +12,31 @@ use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
+use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
 
 class ApiController extends AbstractController
 {
     public const VALID_CONTENT_TYPE = ['application/json'];
+    public const VALID_ACCEPT_TYPE = self::VALID_CONTENT_TYPE;
+    public const FORMAT = 'json';
+
+
+    /**
+     * @param Request $request
+     */
+    public function isValidAccept(Request $request)
+    {
+        if (!$request->headers->has('Accept')) {
+            throw new NotAcceptableHttpException('Accept must be defined');
+        }
+
+        if (!in_array($request->headers->get('Accept'), self::VALID_ACCEPT_TYPE, true)) {
+            throw new UnsupportedMediaTypeHttpException(
+                sprintf('Accept isn\'t accepted,  accepted %s', implode(',', self::VALID_ACCEPT_TYPE))
+            );
+        }
+    }
 
     /**
      * @param Request $request
