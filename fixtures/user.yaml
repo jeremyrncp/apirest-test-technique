@@ -3,3 +3,13 @@ App\Entity\User:
     username: martin
     birthDate: '<date_create()>'
     email: martin.dupont@api.com
+  user_have_three_movies:
+    username: cinefan
+    birthDate: '<date_create()>'
+    email: cinefan@api.com
+    movies: ['@movie_1', '@movie_2', '@movie_3']
+  user_have_two_movies:
+    username: cinetwomovies
+    birthDate: '<date_create()>'
+    email: cinetwomovies@api.com
+    movies: ['@movie_2', '@movie_3']
