@@ -24,6 +24,38 @@ use JMS\Serializer\SerializerInterface;
 class MovieUserController extends UserController
 {
     /**
+     * @Route("/api/user/{userID}/movie", requirements={"userID"="\d+"}, name="movies_user", methods={"GET"})
+     *
+     * @param Request $request
+     * @param int $userID
+     * @param EntityManagerInterface $entityManager
+     * @param SerializerInterface $serializer
+     *
+     * @return Response
+     */
+    public function getMoviesUser(
+        Request $request,
+        int $userID,
+        EntityManagerInterface $entityManager,
+        SerializerInterface $serializer
+    ) {
+        $this->isValidAccept($request);
+
+        $user = $this->fetchUser($userID, $entityManager);
+
+        if (0 === $user->getMovies()->count()) {
+            return new Response('', Response::HTTP_NO_CONTENT);
+        }
+
+        return new Response(
+            $serializer->serialize($user->getMovies(), self::FORMAT),
+            Response::HTTP_OK
+        );
+    }
+
+
+
+    /**
      * @Route("/api/user/{userID}/movie/{imdbID}", requirements={"userID"="\d+"}, name="add_movie_choice_user", methods={"DELETE", "POST"})
      *
      *
