@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Movie;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -19,32 +20,27 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    // /**
-    //  * @return User[] Returns an array of User objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function countMovies(User $user): int
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $qb = $this->createQueryBuilder('u')
+                   ->where('u.id = :idUser')
+                   ->join('u.Movies', 'm')
+                   ->setParameter('idUser', $user->getId())
+                   ->getQuery()
+             ;
 
-    /*
-    public function findOneBySomeField($value): ?User
+        return count($qb->getArrayResult());
+    }
+
+    public function haveMovie(Movie $movie, User $user): bool
     {
         return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+                    ->join('u.Movies', 'm')
+                    ->where('u.id = :idUser')
+                    ->andWhere('m.imdbID = :imdbID')
+                    ->setParameter('idUser', $user->getId())
+                    ->setParameter('imdbID', $movie->getImdbID())
+                    ->getQuery()
+                    ->getOneOrNullResult() ? true : false;
     }
-    */
 }
