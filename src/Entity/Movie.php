@@ -9,7 +9,7 @@ use JMS\Serializer\Annotation\Expose;
 use JMS\Serializer\Annotation\Exclude;
 
 /**
- * @ORM\Entity(repositoryClass="MovieRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\MovieRepository")
  */
 class Movie
 {
