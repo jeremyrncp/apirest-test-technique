@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 
 class MigrationsTest extends KernelTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $kernel = self::bootKernel();
     }
