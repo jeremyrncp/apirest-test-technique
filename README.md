@@ -4,7 +4,7 @@ Welcome to the project created for technical test in "Lyon". This project is dev
 
 For install this project :
 - composer install
-- create test and test_symfony database or update configuration files
+- create test and test_dev database or update configuration files
 - bin/console doctrine:schema:create
 - bin/console hautelook:fixtures:load --no-interaction
 
