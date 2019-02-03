@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Asserts;
+use JMS\Serializer\Annotation\Expose;
+use JMS\Serializer\Annotation\Type;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -16,6 +18,8 @@ class User
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *
+     * @Expose()
      */
     private $id;
 
@@ -23,6 +27,8 @@ class User
      * @ORM\Column(type="string", length=100)
      *
      * @Asserts\NotBlank(message="username must be defined")
+     *
+     * @Expose()
      */
     private $username;
 
@@ -31,6 +37,8 @@ class User
      *
      * @Asserts\NotBlank(message="Email must be defined")
      * @Asserts\Email(message="This email isn't valid", mode="html5")
+     *
+     * @Expose()
      */
     private $email;
 
@@ -38,11 +46,16 @@ class User
      * @ORM\Column(type="date")
      *
      * @Asserts\NotBlank(message="Birth date must be defined")
+     *
+     * @Expose()
+     * @Type("DateTime<'Y-m-d'>")
      */
     private $birthDate;
 
     /**
      * @ORM\Column(type="datetime")
+     *
+     * @Expose()
      */
     private $createdAt;
 
@@ -53,6 +66,8 @@ class User
      *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="movie_id", referencedColumnName="imdb_id")}
      * )
+     *
+     * @Expose()
      */
     private $Movies;
 
