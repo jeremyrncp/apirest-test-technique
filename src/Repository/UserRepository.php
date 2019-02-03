@@ -20,6 +20,16 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
+    public function findUserHaveMovie()
+    {
+       return $this ->createQueryBuilder('u')
+                    ->join('u.Movies','m')
+                    ->where('m.imdbID IS NOT NULL')
+                    ->getQuery()
+                    ->getResult()
+       ;
+    }
+
     public function countMovies(User $user): int
     {
         $qb = $this->createQueryBuilder('u')
