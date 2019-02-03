@@ -22,7 +22,37 @@ class UserControllerTest extends WebTestCase
     {
         $kernel = self::bootKernel();
 
-        $this->serializer = $kernel->getContainer()->get('serializer');
+        $this->serializer = $kernel->getContainer()->get('jms_serializer');
+    }
+
+    public function testMustObtainThreeUser()
+    {
+        $client = static::createClient();
+
+        $client->request('GET', '/api/user',
+            [],
+            [],
+            [
+                'HTTP_ACCEPT' => 'application/json'
+            ]);
+
+        $this->assertCount(3, json_decode($client->getResponse()->getContent(), true));
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+    }
+
+    public function testMustObtainTwoUserHavingMovies()
+    {
+        $client = static::createClient();
+
+        $client->request('GET', '/api/user?havemovie=true',
+            [],
+            [],
+            [
+                'HTTP_ACCEPT' => 'application/json'
+            ]);
+
+        $this->assertCount(2, json_decode($client->getResponse()->getContent(), true));
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
     }
 
     public function testMustObtainAnErrorWhenUserIsAlreadyRegistred()
