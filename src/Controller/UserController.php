@@ -16,12 +16,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
+use JMS\Serializer\SerializerInterface;
 
 class UserController extends ApiController
 {
     /**
-     * @Route("/api/user", name="add_user", methods={"POST"})
+     * @Route("/api/user", name="add_user", methods={"POST", "GET"})
      *
      * @param Request $request
      * @param FormFactoryInterface $formFactory
@@ -29,12 +29,44 @@ class UserController extends ApiController
      * @param SerializerInterface $serializer
      * @return Response
      */
-    public function addUser(
+    public function addOrGetUser(
         Request $request,
         FormFactoryInterface $formFactory,
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer
     ) {
+        if ($request->isMethod('POST')) {
+            return $this->addUser($request, $formFactory, $entityManager, $serializer);
+        }
+
+        return $this->getUsers($request, $entityManager, $serializer);
+    }
+
+    private function getUsers(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        SerializerInterface $serializer
+    ): Response {
+        $this->isValidAccept($request);
+
+        if ($request->query->has('havemovie') && $request->query->get('havemovie') === 'true') {
+            $users = $entityManager->getRepository(User::class)->findUserHaveMovie();
+        } else {
+            $users = $entityManager->getRepository(User::class)->findAll();
+        }
+
+        return new Response(
+            $serializer->serialize($users, self::FORMAT),
+            Response::HTTP_OK
+        );
+    }
+
+    private function addUser(
+        Request $request,
+        FormFactoryInterface $formFactory,
+        EntityManagerInterface $entityManager,
+        SerializerInterface $serializer
+    ): Response {
         $this->isValidBody($request);
 
         $user = new User();
@@ -59,7 +91,6 @@ class UserController extends ApiController
             return $this->getResponseWithFormErrors($userForm->getErrors(true));
         }
     }
-
 
     protected function fetchUser(int $idUser, EntityManagerInterface $em): User
     {
