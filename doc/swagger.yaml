@@ -1,0 +1,258 @@
+swagger: "2.0"
+info:
+  description: "This is a Swagger definition generated for an API"
+  version: "1.0.0"
+  title: "Swagger API"
+  contact:
+    email: "contact@gaultierweb.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "apirest.test.com"
+basePath: "/api"
+tags:
+- name: "movie"
+  description: "A list of movie already selected or selected once"
+- name: "user"
+  description: "User in application"
+schemes:
+- "http"
+paths:
+  /movie:
+    get:
+      tags:
+      - "movie"
+      summary: "Fech all movies or best movie"
+      description: ""
+      operationId: "addPet"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "sort"
+        in: "query"
+        description: "Obtain a movie have max selections"
+        required: false
+        type: "string"
+        default: "mostselected"
+      responses:
+        406:
+          description: "Undefined accept header"
+          schema:
+            $ref: "#/definitions/ApIErrorResponse"
+        415:
+          description: "Invalid accept type"
+          schema:
+            $ref: "#/definitions/ApIErrorResponse"
+  /user:
+    post:
+      tags:
+      - "user"
+      summary: "Create user"
+      description: "Create an user"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Created user"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        201: 
+          description: "User created"
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: "Invalid json or Content-Type"
+          schema:
+            $ref: "#/definitions/ApIErrorResponse"
+        406:
+          description: "Undefined accept header"
+          schema:
+            $ref: "#/definitions/ApIErrorResponse"
+        415:
+          description: "Invalid accept type"
+          schema:
+            $ref: "#/definitions/ApIErrorResponse"
+    get:
+      tags:
+      - "user"
+      summary: "List of users"
+      description: "Create an user"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "havemovie"
+        in: "query"
+        type: "string"
+        description: "List of user have one or more movies"
+        required: false
+        default: "true"
+      responses:
+        200: 
+          description: "List of movies"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/User"
+        406:
+          description: "Undefined accept header"
+          schema:
+            $ref: "#/definitions/ApIErrorResponse"
+        415:
+          description: "Invalid accept type"
+          schema:
+            $ref: "#/definitions/ApIErrorResponse"
+              
+  /user/{userid}/movie:
+    get:
+      tags:
+      - "movie"
+      summary: "List of user movies"
+      description: "List of user movies"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userid"
+        in: "path"
+        description: "ID of user"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200: 
+          description: "Movies selected by user"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Movie"
+        204:
+          description: "No content"
+        406:
+          description: "Undefined accept header"
+          schema:
+            $ref: "#/definitions/ApIErrorResponse"
+        415:
+          description: "Invalid accept type"
+          schema:
+            $ref: "#/definitions/ApIErrorResponse"
+          
+  /user/{userid}/movie/{omdbid}:
+    delete:
+      tags:
+      - "movie"
+      summary: "Selected movie"
+      description: "Selected movie by user"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userid"
+        in: "path"
+        description: "ID of user"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "omdbid"
+        in: "path"
+        description: "OMDB id of movie"
+        required: true
+        type: "string"
+      responses:
+        204: 
+          description: "Movie deleted by user"
+        400:
+          description: "Invalid json or Content-Type, movie hasn't property of user"
+          schema:
+            $ref: "#/definitions/ApIErrorResponse"
+        406:
+          description: "Undefined accept header"
+          schema:
+            $ref: "#/definitions/ApIErrorResponse"
+        415:
+          description: "Invalid accept type"
+          schema:
+            $ref: "#/definitions/ApIErrorResponse"
+            
+    post:
+      tags:
+      - "movie"
+      summary: "Delete movie"
+      description: "Delete movie by user"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userid"
+        in: "path"
+        description: "ID of user"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "omdbid"
+        in: "path"
+        description: "OMDB id of movie"
+        required: true
+        type: "string"
+      responses:
+        200: 
+          description: "Movie selected by user"
+          schema:
+            $ref: "#/definitions/Movie"
+        204:
+          description: "No content"
+        400:
+          description: "Invalid json or Content-Type, movie alreadu selected by user or user have three movies selected"
+          schema:
+            $ref: "#/definitions/ApIErrorResponse"
+        406:
+          description: "Undefined accept header"
+          schema:
+            $ref: "#/definitions/ApIErrorResponse"
+        415:
+          description: "Invalid accept type"
+          schema:
+            $ref: "#/definitions/ApIErrorResponse"
+definitions:
+  ApIErrorResponse:
+    type: "object"
+    properties:
+      msg:
+        type: "string"
+        example: "Error informations"
+  User:
+    type: "object"
+    required:
+    - "username"
+    - "email"
+    - "birthDate"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+        example: "1"
+      username:
+        type: "string"
+        example: "martindupont"
+      email:
+        type: "string"
+        example: "martin.dupont@email.com"    
+      birthDate:
+        type: "string"
+        example: "1971-01-01" 
+  Movie:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        example: "tt1285016"
+      title:
+        type: "string"
+        example: "The Social Network"
+      poster:
+        type: "string"
+        description: "Poster in base64"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
