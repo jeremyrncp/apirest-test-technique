@@ -21,7 +21,7 @@ use JMS\Serializer\SerializerInterface;
 class UserController extends ApiController
 {
     /**
-     * @Route("/api/user", name="add_user", methods={"POST", "GET"})
+     * @Route("/api/user", name="get_user", methods={"GET"})
      *
      * @param Request $request
      * @param FormFactoryInterface $formFactory
@@ -29,24 +29,12 @@ class UserController extends ApiController
      * @param SerializerInterface $serializer
      * @return Response
      */
-    public function addOrGetUser(
+    public function getAnUser(
         Request $request,
         FormFactoryInterface $formFactory,
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer
     ) {
-        if ($request->isMethod('POST')) {
-            return $this->addUser($request, $formFactory, $entityManager, $serializer);
-        }
-
-        return $this->getUsers($request, $entityManager, $serializer);
-    }
-
-    private function getUsers(
-        Request $request,
-        EntityManagerInterface $entityManager,
-        SerializerInterface $serializer
-    ): Response {
         $this->isValidAccept($request);
 
         if ($request->query->has('havemovie') && $request->query->get('havemovie') === 'true') {
@@ -61,12 +49,22 @@ class UserController extends ApiController
         );
     }
 
-    private function addUser(
+
+    /**
+    * @Route("/api/user", name="add_user", methods={"POST"})
+    *
+    * @param Request $request
+    * @param FormFactoryInterface $formFactory
+    * @param EntityManagerInterface $entityManager
+    * @param SerializerInterface $serializer
+    * @return Response
+    */
+    public function addUser(
         Request $request,
         FormFactoryInterface $formFactory,
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer
-    ): Response {
+    ) {
         $this->isValidBody($request);
 
         $user = new User();

@@ -56,7 +56,7 @@ class MovieUserController extends UserController
 
 
     /**
-     * @Route("/api/user/{userID}/movie/{imdbID}", requirements={"userID"="\d+"}, name="add_movie_choice_user", methods={"DELETE", "POST"})
+     * @Route("/api/user/{userID}/movie/{imdbID}", requirements={"userID"="\d+"}, name="add_movie_choice_user", methods={"POST"})
      *
      *
      * @param Request $request
@@ -69,7 +69,7 @@ class MovieUserController extends UserController
      * @return Response
      * @throws InvalidWebServiceException
      */
-    public function deleteOrAddMovieUser(
+    public function addMovieUser(
         Request $request,
         int $userID,
         string $imdbID,
@@ -84,12 +84,44 @@ class MovieUserController extends UserController
             $movie = $movieService->getMovie($imdbID);
             $user = $this->fetchUser($userID, $entityManager);
 
-            if ($request->isMethod('DELETE')) {
-                return $this->removeMovie($movie, $user, $userService, $entityManager);
-            }
-
             return $this->addMovie($movie, $user, $userService, $entityManager, $serializer);
+        } catch (InvalidParameterException $e) {
+            throw new BadRequestHttpException($e->getMessage(), $e);
+        } catch (MovieChoiceException $e) {
+            throw new BadRequestHttpException($e->getMessage(), $e);
+        }
+    }
 
+    /**
+     * @Route("/api/user/{userID}/movie/{imdbID}", requirements={"userID"="\d+"}, name="delete_movie_choice_user", methods={"DELETE"})
+     *
+     *
+     * @param Request $request
+     * @param int $userID
+     * @param string $imdbID
+     * @param MovieService $movieService
+     * @param UserService $userService
+     * @param EntityManagerInterface $entityManager
+     * @param SerializerInterface $serializer
+     * @return Response
+     * @throws InvalidWebServiceException
+     */
+    public function deleteMovieUser(
+        Request $request,
+        int $userID,
+        string $imdbID,
+        MovieService $movieService,
+        UserService $userService,
+        EntityManagerInterface $entityManager,
+        SerializerInterface $serializer
+    ) {
+        try {
+            $this->isValidAccept($request);
+
+            $movie = $movieService->getMovie($imdbID);
+            $user = $this->fetchUser($userID, $entityManager);
+
+            return $this->removeMovie($movie, $user, $userService, $entityManager);
         } catch (InvalidParameterException $e) {
             throw new BadRequestHttpException($e->getMessage(), $e);
         } catch (MovieChoiceException $e) {
